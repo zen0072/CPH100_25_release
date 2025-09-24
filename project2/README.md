@@ -53,7 +53,7 @@ python check_installation.py
 
 
 ### Code Structure Overview
-- `classification_main.py`: Training orchesyRmD$RzC48!aLGgr3PKdLbkmhqm3tration (provided)
+- `classification_main.py`: Training orchestration (provided)
 - `classification_models.py`: **TODO** - Implement your classifier neural networks, including a simple MLP classifier and CNNs
 - `classification_train.py`: **TODO** - Implement training/validation loops with PyTorch
 - `classification_dataset.py`: PathMNIST data loading (provided)
