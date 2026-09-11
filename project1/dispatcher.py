@@ -6,6 +6,7 @@ from csv import DictWriter
 import multiprocessing
 import itertools
 import sys
+import subprocess
 
 def add_main_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
     parser.add_argument(
@@ -33,6 +34,13 @@ def add_main_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
         "--grid_search_results_path",
         default="grid_results.csv",
         help="Where to save grid search results"
+    )
+
+    parser.add_argument(
+    "--plco_data_path",
+    type=str,
+    default="/Users/kelz/cph100/CPH100_25_release/project1/lung_prsn.csv",
+    help="Location of PLCO csv"
     )
 
     return parser
@@ -64,8 +72,17 @@ def get_experiment_list(config: dict) -> list[dict]:
     jobs = [{}]
 
     # TODO: Go through the tree of possible jobs and enumerate into a list of jobs
-    raise NotImplementedError("Not implemented yet")
-
+   #raise NotImplementedError("Not implemented yet")
+    for key, values in config.items():
+        if not isinstance(values, list):
+            values= [values]
+        newjobs = []
+        for u in jobs:
+             for e in values:
+                newjob= dict(u)
+                newjob[key]=e
+                newjobs.append(newjob) 
+        jobs= newjobs
     return jobs
 
 def worker(args: argparse.Namespace, job_queue: multiprocessing.Queue, done_queue: multiprocessing.Queue):
@@ -110,9 +127,24 @@ def launch_experiment(args: argparse.Namespace, experiment_config: dict) -> dict
 
     # TODO: Parse the results from the experiment and return them as a dict
 
-    raise NotImplementedError("Not implemented yet")
+    #raise NotImplementedError("Not implemented yet")
+    
+    results_path = os.path.join(args.log_dir, "result_{}.json".format(random.randint(0, 1000000)))
+    command = ["python", "main.py", "--plco_data_path", args.plco_data_path, "--results_path", results_path]
+    for key, value in experiment_config.items():
+        command.extend([f"--{key}", str(value)])
+    subprocess.run(command, check=True)
+    
 
     results = {}
+    with open(results_path, "r") as f:
+        experiment_results = json.load(f)
+
+    for key, value in experiment_config.items():
+        results[key] = value
+
+    for key, value in experiment_results.items():
+        results[key] = value
     return results
 
 

@@ -86,8 +86,17 @@ def main(args: argparse.Namespace) -> dict:
     #     "categorical": ["sex", "race7"],     # Features for one-hot encoding
     #     "ordinal": ["educat"]                # Features for integer encoding
     # }
-    feature_config = None
-
+    # feature_config = {"categorical": ["nlst_flag"]}
+    feature_config = {
+          "numerical": ["age", "pack_years","fstcan_exitdays"],  # Features to normalize
+          "categorical": ["sex", "race7", "ph_lung_bq", "center"],     # Features for one-hot encoding
+          "ordinal": ["educat", "lung_pathstage_7e","num_cancl"]                # Features for integer encoding
+      }
+    # feature_config = {
+    #     "numerical": ["age",],  # Features to normalize
+    #     "categorical": ["sex", "race7"],     # Features for one-hot encoding
+    #     "ordinal": ["educat"]                # Features for integer encoding
+    #   }
     print("Initializing vectorizer and extracting features")
     # TODO: Implement a vectorizer to convert the questionnaire features into a feature vector
     plco_vectorizer = Vectorizer(feature_config)
@@ -96,7 +105,9 @@ def main(args: argparse.Namespace) -> dict:
     plco_vectorizer.fit(train)
 
     # TODO: Featurize the training, validation and testing data
+
     train_X = plco_vectorizer.transform(train)
+
     val_X = plco_vectorizer.transform(val)
     test_X = plco_vectorizer.transform(test)
 
@@ -124,7 +135,8 @@ def main(args: argparse.Namespace) -> dict:
 
     results = {
         "train_auc": roc_auc_score(train_Y, pred_train_Y),
-        "val_auc": roc_auc_score(val_Y, pred_val_Y)
+        "val_auc": roc_auc_score(val_Y, pred_val_Y),
+        "train_loss": model.train_loss
     }
 
     print(results)
