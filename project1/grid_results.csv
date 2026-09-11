@@ -1,0 +1,2 @@
+learning_rate,batch_size,num_epochs,regularization_lambda,train_auc,train_loss,val_auc
+0.0001,256,10,0,0.6233742693302272,0.20673685482463613,0.6595134666479899
