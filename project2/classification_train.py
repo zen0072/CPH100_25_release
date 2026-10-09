@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 
-def train_model(model, train_loader, val_loader, epochs=20, learning_rate=0.001, weight_decay=0.0, max_steps_per_epoch=100):
+def train_model(model, train_loader, val_loader, epochs=25, learning_rate=0.001, weight_decay=0.0, max_steps_per_epoch=100):
     """
     Simple training function for PathMNIST models.
     
@@ -28,7 +28,7 @@ def train_model(model, train_loader, val_loader, epochs=20, learning_rate=0.001,
     
     # Setup optimizer and loss function
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
-    criterion = None # TODO: Add your own loss function here
+    criterion = nn.CrossEntropyLoss() # TODO: Add your own loss function here
     
     # Track training history
     history = {
@@ -81,8 +81,11 @@ def train_epoch(model, train_loader, optimizer, criterion, device, max_steps=Non
             break
             
         data, target = data.to(device), target.to(device)
-        
-        # Flatten target if needed
+        if torch.rand(1).item() < 0.5:
+            data = torch.flip(data, dims=[3])    
+        if torch.rand(1).item() < 0.5:
+            data = torch.flip(data, dims=[2]) 
+
         if target.dim() > 1:
             target = target.squeeze()
         
@@ -90,9 +93,11 @@ def train_epoch(model, train_loader, optimizer, criterion, device, max_steps=Non
         optimizer.zero_grad()
         
         #TODO: Implement the forward pass
+        output=model(data)
 
         #TODO: Compute the loss
-        loss = 0 # TODO: Compute the loss
+        loss = criterion(output, target) # TODO: Compute the loss
+
 
         loss.backward()
         optimizer.step()
@@ -130,9 +135,12 @@ def validate_epoch(model, val_loader, criterion, device):
             
             # Forward pass
             #TODO: Implement the forward pass
+            output=model(data)
 
             #TODO: Compute the loss
-            loss = 0 # TODO: Compute the loss
+            loss = criterion(output, target) # TODO: Compute the loss
+
+
             
             # Track statistics
             total_loss += loss.item()

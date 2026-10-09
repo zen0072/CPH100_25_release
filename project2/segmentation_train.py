@@ -9,7 +9,7 @@ from tqdm import tqdm
 import numpy as np
 from segmentation_models import CombinedLoss, calculate_iou
 
-def train_segmentation_model(model, train_loader, val_loader, epochs=25, learning_rate=0.001, weight_decay=0.0, max_steps_per_epoch=100):
+def train_segmentation_model(model, train_loader, val_loader, epochs=30, learning_rate=0.001, weight_decay=0.0, max_steps_per_epoch=100):
     """
     Train a segmentation model.
     
@@ -31,7 +31,7 @@ def train_segmentation_model(model, train_loader, val_loader, epochs=25, learnin
     # Setup optimizer and loss
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 
-    criterion = None # TODO: Add your own loss function here (hint: Combined BCE + DICE loss is suggested)
+    criterion = CombinedLoss(bce_weight=0.5, dice_weight=0.5) # TODO: Add your own loss function here (hint: Combined BCE + DICE loss is suggested)
     
     # Training history
     history = {
@@ -85,10 +85,10 @@ def train_segmentation_epoch(model, train_loader, optimizer, criterion, device, 
         
         # Forward pass
         #TODO: Implement the forward pass
-        predictions = 0 # TODO: Compute the predictions
+        predictions = model(images) # TODO: Compute the predictions
 
         #TODO: Compute the loss
-        loss = 0 # TODO: Compute the loss
+        loss = criterion(predictions, masks) # TODO: Compute the loss
         
         # Backward pass
         loss.backward()
@@ -124,10 +124,10 @@ def validate_segmentation_epoch(model, val_loader, criterion, device):
             
             # Forward pass
             #TODO: Implement the forward pass
-            predictions = 0 # TODO: Compute the predictions
+            predictions = model(images) # TODO: Compute the predictions
 
             #TODO: Compute the loss
-            loss = 0 # TODO: Compute the loss
+            loss = criterion(predictions, masks) # TODO: Compute the loss
             
             # Calculate IoU for this batch
             iou = calculate_iou(predictions, masks)
@@ -166,7 +166,7 @@ def evaluate_segmentation_model(model, test_loader, dataset_name="Test"):
             has_boxes = batch['has_box']
             
             #TODO: Implement the forward pass
-            predictions = 0 # TODO: Compute the predictions
+            predictions = model(images) # TODO: Compute the predictions
             
             # Calculate IoU for each sample in batch (all samples have boxes)
             for i in range(images.size(0)):

@@ -35,7 +35,7 @@ def main(args):
             epochs=args.num_epochs,
             learning_rate=args.learning_rate,
             weight_decay=args.weight_decay,
-            max_steps_per_epoch=100  # Fast exploration mode. #TODO: Change for your full runs
+            max_steps_per_epoch=None  # Fast exploration mode. #TODO: Change for your full runs
         )
         
         print("Training completed successfully!")
@@ -59,7 +59,7 @@ if __name__ == "__main__":
                        help='Model to train')
     parser.add_argument('--learning_rate', type=float, default=0.001,
                        help='Learning rate for training')
-    parser.add_argument('--num_epochs', type=int, default=1,
+    parser.add_argument('--num_epochs', type=int, default=20,
                        help='Number of epochs to train')
     parser.add_argument('--weight_decay', type=float, default=0.0,
                        help='Weight decay for regularization')
